@@ -3,9 +3,9 @@
 Proyecto Semestral de la asignatura Desarrollo FullStack 1 (DSY1103).
 Sistema de gestión para una veterinaria basado en microservicios con Spring Boot.
 
-## Integrantes
-- Nombre Apellido — Equipo N° __
-- Nombre Apellido — Equipo N° __
+## Integrantes — Equipo N° 8
+- Cusi Ramirez B.
+- Satiago Garcia-Huidobro S.
 
 ## Tecnologías
 - Java 21 · Spring Boot 4.0.6
