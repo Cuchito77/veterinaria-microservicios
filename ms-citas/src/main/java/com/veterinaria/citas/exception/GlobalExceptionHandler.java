@@ -35,9 +35,19 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
+    // 400 - Stock insuficiente en ms-inventario (regla de negocio)
+    @ExceptionHandler(StockInsuficienteException.class)
+    public ResponseEntity<Map<String, String>> handleStock(
+            StockInsuficienteException ex) {
         return ResponseEntity.badRequest()
                 .body(Map.of("error", ex.getMessage()));
+    }
+
+    // 500 - Cualquier error NO controlado (antes devolvia 400 y ocultaba
+    // bugs reales). No se expone el detalle interno al cliente.
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Ocurrio un error interno en el servidor"));
     }
 }

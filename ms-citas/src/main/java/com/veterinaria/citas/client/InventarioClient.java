@@ -3,6 +3,7 @@ package com.veterinaria.citas.client;
 import com.veterinaria.citas.dto.DescuentoStockDTO;
 import com.veterinaria.citas.exception.ComunicacionException;
 import com.veterinaria.citas.exception.RecursoNoEncontradoException;
+import com.veterinaria.citas.exception.StockInsuficienteException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class InventarioClient {
         } catch (WebClientResponseException.BadRequest e) {
             // ms-inventario devuelve 400 si no hay stock suficiente
             log.warn("ms-inventario rechazo el descuento: stock insuficiente");
-            throw new RuntimeException(
+            throw new StockInsuficienteException(
                     "Stock insuficiente en ms-inventario para el producto " + productoId);
         } catch (Exception e) {
             log.error("Error al comunicarse con ms-inventario: {}", e.getMessage());
