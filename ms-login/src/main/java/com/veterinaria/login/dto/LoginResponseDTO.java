@@ -13,4 +13,5 @@ public class LoginResponseDTO {
     private String mensaje;
     private String username;
     private String rol;
+    private String token;   // JWT emitido cuando la autenticacion es exitosa (null si falla)
 }
