@@ -1,0 +1,17 @@
+# ═══════════════════════════════════════════════════
+# EUREKA SERVER · application.yml
+# ═══════════════════════════════════════════════════
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  client:
+    # El servidor NO se registra en si mismo ni se descarga el registro
+    register-with-eureka: false
+    fetch-registry: false
+  instance:
+    hostname: localhost
