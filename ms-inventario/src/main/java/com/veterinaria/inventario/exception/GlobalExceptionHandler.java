@@ -34,9 +34,11 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.badRequest()
-                .body(Map.of("error", ex.getMessage()));
+    // Cualquier error NO controlado -> 500 (antes devolvia 400 y ocultaba
+    // bugs reales como NullPointerException). No se expone el detalle interno.
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Ocurrio un error interno en el servidor"));
     }
 }
