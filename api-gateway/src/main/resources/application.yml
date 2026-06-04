@@ -1,0 +1,44 @@
+# ═══════════════════════════════════════════════════
+# API GATEWAY · application.yml
+# Punto unico de entrada en el puerto 8080.
+# ═══════════════════════════════════════════════════
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # ── ms-login (auth + cuentas) ──────────────────
+        - id: ms-login
+          uri: lb://ms-login
+          predicates:
+            - Path=/api/auth/**,/api/usuarios/**,/api/v2/usuarios/**
+
+        # ── ms-usuarios (duenos + mascotas) ────────────
+        - id: ms-usuarios
+          uri: lb://ms-usuarios
+          predicates:
+            - Path=/api/duenos/**,/api/mascotas/**,/api/v2/duenos/**,/api/v2/mascotas/**
+
+        # ── ms-inventario (productos) ──────────────────
+        - id: ms-inventario
+          uri: lb://ms-inventario
+          predicates:
+            - Path=/api/productos/**,/api/v2/productos/**
+
+        # ── ms-citas (citas) ───────────────────────────
+        - id: ms-citas
+          uri: lb://ms-citas
+          predicates:
+            - Path=/api/citas/**,/api/v2/citas/**
+
+# El Gateway tambien es cliente de Eureka para descubrir los servicios.
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
