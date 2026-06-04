@@ -4,7 +4,6 @@ package com.veterinaria.usuarios.exception;
 // La lanza la capa de servicio y la traduce a HTTP 404
 // el GlobalExceptionHandler.
 public class RecursoNoEncontradoException extends RuntimeException {
-    public RecursoNoEncontradoException(String mensaje) {
-        super(mensaje);
+    public RecursoNoEncontradoException(String mensaje) {super(mensaje);
     }
 }

@@ -36,10 +36,19 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    // 400 - Cualquier otra regla de negocio
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.badRequest()
+    // 409 - Recurso duplicado (ej: RUT repetido)
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicado(
+            RecursoDuplicadoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("error", ex.getMessage()));
+    }
+
+    // 500 - Cualquier error NO controlado (antes devolvia 400 y ocultaba
+    // bugs reales). No se expone el detalle interno al cliente.
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Ocurrio un error interno en el servidor"));
     }
 }

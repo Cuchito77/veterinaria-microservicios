@@ -2,6 +2,7 @@ package com.veterinaria.usuarios.service;
 
 import com.veterinaria.usuarios.dto.DuenoRequestDTO;
 import com.veterinaria.usuarios.dto.DuenoResponseDTO;
+import com.veterinaria.usuarios.exception.RecursoDuplicadoException;
 import com.veterinaria.usuarios.exception.RecursoNoEncontradoException;
 import com.veterinaria.usuarios.model.Dueno;
 import com.veterinaria.usuarios.repository.DuenoRepository;
@@ -49,10 +50,10 @@ public class DuenoService {
     }
 
     public DuenoResponseDTO guardar(DuenoRequestDTO dto) {
-        // Regla de negocio: no se permite RUT duplicado
+        // Regla de negocio: no se permite RUT duplicado -> 409 Conflict
         duenoRepository.findByRut(dto.getRut()).ifPresent(d -> {
             log.warn("Intento de crear dueno con RUT duplicado: {}", dto.getRut());
-            throw new RuntimeException("Ya existe un dueno con el RUT: " + dto.getRut());
+            throw new RecursoDuplicadoException("Ya existe un dueno con el RUT: " + dto.getRut());
         });
         Dueno dueno = new Dueno(null, dto.getNombre(),
                 dto.getRut(), dto.getEmail(), dto.getTelefono());
@@ -65,6 +66,15 @@ public class DuenoService {
         Dueno existente = duenoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Dueno no encontrado con id: " + id));
+
+        // Si cambia el RUT, verificar que no lo use OTRO dueno -> 409 Conflict
+        duenoRepository.findByRut(dto.getRut())
+                .filter(d -> !d.getId().equals(id))
+                .ifPresent(d -> {
+                    throw new RecursoDuplicadoException(
+                            "Ya existe otro dueno con el RUT: " + dto.getRut());
+                });
+
         existente.setNombre(dto.getNombre());
         existente.setRut(dto.getRut());
         existente.setEmail(dto.getEmail());
