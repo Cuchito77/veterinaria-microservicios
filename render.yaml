@@ -1,0 +1,32 @@
+# ═════════════════════════════════════════════════════
+# RENDER BLUEPRINT · Despliegue PaaS (Unidad 3)
+# Despliega ms-usuarios como Web Service Docker en Render.
+#
+# La base de datos es un MySQL gratuito de Aiven (Render no
+# ofrece MariaDB/MySQL gratis). Las credenciales se cargan
+# como variables de entorno SECRETAS en el dashboard de
+# Render (sync: false = Render las pide al crear el servicio,
+# nunca quedan en el repositorio).
+# ═════════════════════════════════════════════════════
+
+services:
+  - type: web
+    name: ms-usuarios
+    runtime: docker
+    # Solo se construye esta carpeta (usa su Dockerfile multi-stage)
+    rootDir: ms-usuarios
+    plan: free
+    # Rama que Render observa para auto-desplegar.
+    # TODO: cambiar a "main" cuando se mergee feature/docker.
+    branch: feature/docker
+    envVars:
+      # ── Conexion a la BD MySQL de Aiven (secretas) ──
+      - key: SPRING_DATASOURCE_URL
+        sync: false   # se ingresa en el dashboard
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      # ── En la nube el servicio va solo, sin Eureka ──
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
