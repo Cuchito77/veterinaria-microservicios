@@ -151,4 +151,77 @@ class MascotaServiceTest {
                 () -> mascotaService.eliminar(99L));
         verify(mascotaRepository, never()).deleteById(any());
     }
+
+    @Test
+    @DisplayName("obtenerPorDueno: devuelve las mascotas asociadas al dueno")
+    void obtenerPorDueno_devuelveLista() {
+        // Arrange
+        Dueno dueno = nuevoDueno(1L);
+        when(mascotaRepository.findByDuenoId(1L)).thenReturn(List.of(
+                nuevaMascota(1L, "Firulais", dueno),
+                nuevaMascota(2L, "Bobby", dueno)));
+
+        // Act
+        List<MascotaResponseDTO> resultado = mascotaService.obtenerPorDueno(1L);
+
+        // Assert
+        assertEquals(2, resultado.size());
+        assertEquals(1L, resultado.get(0).getDuenoId());
+        verify(mascotaRepository).findByDuenoId(1L);
+    }
+
+    @Test
+    @DisplayName("actualizar: actualiza la mascota cuando existe y el dueno existe (caso feliz)")
+    void actualizar_datosValidos_actualizaMascota() {
+        // Arrange
+        Dueno dueno = nuevoDueno(1L);
+        MascotaRequestDTO dto = new MascotaRequestDTO(
+                "Firulais Editado", "Gato", "Siames", 5, 1L);
+        when(mascotaRepository.findById(1L))
+                .thenReturn(Optional.of(nuevaMascota(1L, "Firulais", dueno)));
+        when(duenoRepository.findById(1L)).thenReturn(Optional.of(dueno));
+        when(mascotaRepository.save(any(Mascota.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        MascotaResponseDTO resultado = mascotaService.actualizar(1L, dto);
+
+        // Assert
+        assertEquals("Firulais Editado", resultado.getNombre());
+        assertEquals("Gato", resultado.getEspecie());
+        assertEquals("Siames", resultado.getRaza());
+        assertEquals(5, resultado.getEdad());
+        assertEquals(1L, resultado.getDuenoId());
+        verify(mascotaRepository).save(any(Mascota.class));
+    }
+
+    @Test
+    @DisplayName("actualizar: lanza RecursoNoEncontradoException si el dueno no existe (mascota si existe)")
+    void actualizar_duenoInexistente_lanzaExcepcion() {
+        // Arrange: la mascota existe pero el nuevo dueno no
+        Dueno dueno = nuevoDueno(1L);
+        MascotaRequestDTO dto = new MascotaRequestDTO(
+                "Firulais", "Perro", "Labrador", 4, 99L);
+        when(mascotaRepository.findById(1L))
+                .thenReturn(Optional.of(nuevaMascota(1L, "Firulais", dueno)));
+        when(duenoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThrows(RecursoNoEncontradoException.class,
+                () -> mascotaService.actualizar(1L, dto));
+        verify(mascotaRepository, never()).save(any(Mascota.class));
+    }
+
+    @Test
+    @DisplayName("eliminar: elimina la mascota cuando existe (caso feliz)")
+    void eliminar_mascotaExistente_eliminaMascota() {
+        // Arrange
+        when(mascotaRepository.existsById(1L)).thenReturn(true);
+
+        // Act
+        mascotaService.eliminar(1L);
+
+        // Assert
+        verify(mascotaRepository).deleteById(1L);
+    }
 }
