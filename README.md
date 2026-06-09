@@ -8,7 +8,7 @@ Sistema de gestión para una veterinaria basado en microservicios con Spring Boo
 - Santiago Garcia-Huidobro S.
 
 ## Tecnologías
-- Java 21 · Spring Boot 4.0.6
+- Java 21 · Spring Boot 3.4.5
 - MariaDB (Laragon) · JPA + Hibernate + Flyway
 - Comunicación entre microservicios: WebClient
 
