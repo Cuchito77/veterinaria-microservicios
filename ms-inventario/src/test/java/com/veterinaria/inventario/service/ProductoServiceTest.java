@@ -159,4 +159,84 @@ class ProductoServiceTest {
                 () -> productoService.eliminar(99L));
         verify(productoRepository, never()).deleteById(anyLong());
     }
+
+    @Test
+    @DisplayName("obtenerPorCategoria: devuelve los productos de la categoria mapeados a DTO")
+    void obtenerPorCategoria_devuelveListaDeProductos() {
+        // Arrange
+        when(productoRepository.findByCategoria("Vacuna")).thenReturn(List.of(
+                nuevoProducto(1L, 50),
+                nuevoProducto(2L, 30)));
+
+        // Act
+        List<ProductoResponseDTO> resultado = productoService.obtenerPorCategoria("Vacuna");
+
+        // Assert
+        assertEquals(2, resultado.size());
+        assertEquals("Vacuna", resultado.get(0).getCategoria());
+        verify(productoRepository).findByCategoria("Vacuna");
+    }
+
+    @Test
+    @DisplayName("actualizar: cuando el producto existe modifica sus datos y devuelve el DTO (caso feliz)")
+    void actualizar_cuandoExiste_actualizaProducto() {
+        // Arrange: producto existente que sera modificado
+        Producto existente = nuevoProducto(1L, 50);
+        ProductoRequestDTO dto = new ProductoRequestDTO(
+                "Vacuna Triple", "Vacuna", new BigDecimal("15000.00"), 80);
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(existente));
+        when(productoRepository.save(any(Producto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        ProductoResponseDTO resultado = productoService.actualizar(1L, dto);
+
+        // Assert: los datos quedan actualizados con los valores del DTO
+        assertEquals("Vacuna Triple", resultado.getNombre());
+        assertEquals(new BigDecimal("15000.00"), resultado.getPrecio());
+        assertEquals(80, resultado.getStock());
+        verify(productoRepository).save(existente);
+    }
+
+    @Test
+    @DisplayName("actualizar: si el producto no existe lanza RecursoNoEncontradoException")
+    void actualizar_productoInexistente_lanzaExcepcion() {
+        // Arrange
+        ProductoRequestDTO dto = new ProductoRequestDTO(
+                "Vacuna Triple", "Vacuna", new BigDecimal("15000.00"), 80);
+        when(productoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThrows(RecursoNoEncontradoException.class,
+                () -> productoService.actualizar(99L, dto));
+        verify(productoRepository, never()).save(any(Producto.class));
+    }
+
+    @Test
+    @DisplayName("eliminar: cuando el producto existe lo elimina por su id (caso feliz)")
+    void eliminar_cuandoExiste_eliminaProducto() {
+        // Arrange
+        when(productoRepository.existsById(1L)).thenReturn(true);
+
+        // Act
+        productoService.eliminar(1L);
+
+        // Assert
+        verify(productoRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("descontarStock: con stock justo igual a la cantidad deja el stock en 0 (limite)")
+    void descontarStock_conStockJusto_dejaEnCero() {
+        // Arrange: producto con exactamente 10 unidades
+        Producto producto = nuevoProducto(1L, 10);
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
+        when(productoRepository.save(any(Producto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act: descontamos las 10 disponibles
+        ProductoResponseDTO resultado = productoService.descontarStock(1L, 10);
+
+        // Assert: queda en 0 y se guarda
+        assertEquals(0, resultado.getStock());
+        verify(productoRepository).save(producto);
+    }
 }

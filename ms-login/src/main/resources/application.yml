@@ -1,0 +1,90 @@
+# ═══════════════════════════════════════════════════
+# MS-LOGIN · application.yml
+# Microservicio de autenticacion y cuentas (emite el JWT)
+#
+# Usa PERFILES de Spring (spring.profiles):
+#   - dev  : ejecucion LOCAL (Laragon + Eureka en localhost). Perfil por defecto.
+#   - prod : despliegue REMOTO (Render + Aiven). Sin Eureka, todo por variables.
+#
+# Las variables de entorno (docker-compose / Render) SOBREESCRIBEN
+# estos valores (relaxed binding de Spring Boot).
+# ═══════════════════════════════════════════════════
+
+spring:
+  application:
+    name: ms-login
+  # Perfil activo por defecto = dev (local). En la nube se pone prod.
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+# ── SWAGGER / OPENAPI (comun) ───────────────────────
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /doc/swagger-ui.html
+
+# ── JWT ─────────────────────────────────────────────
+# La MISMA clave debe estar en los 4 microservicios para que
+# el token emitido por ms-login sea validado por todos.
+jwt:
+  secret: ${JWT_SECRET:veterinariaFullStackCL2026claveSecretaJWTsuperSeguraHS256xyz123}
+  expiration: 3600000
+
+# ═══════════════════════════════════════════════════
+# PERFIL DEV · ejecucion local (Laragon + Eureka local)
+# ═══════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/vet_login_db
+    username: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# Puerto 8084: el 8080 lo usa el API Gateway.
+server:
+  port: 8084
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# ═══════════════════════════════════════════════════
+# PERFIL PROD · despliegue remoto (Render + Aiven)
+# ═══════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: ${PORT:8084}
+
+eureka:
+  client:
+    enabled: false

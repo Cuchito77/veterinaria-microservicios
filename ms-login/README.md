@@ -12,7 +12,7 @@ el CRUD de cuentas de usuario con roles diferenciados.
 - **Java:** 21
 - **Spring Boot:** 4.0.6
 - **Puerto:** `8080`
-- **Base de datos:** `vet_login_db` (MariaDB / Laragon)
+- **Base de datos:** `vet_login_db` (MySQL / Laragon)
 - **Persistencia:** JPA + Hibernate (ddl-auto=validate) + Flyway
 
 ## Funcionalidades implementadas
@@ -24,7 +24,7 @@ el CRUD de cuentas de usuario con roles diferenciados.
   y logs estructurados con SLF4J.
 
 ## Pasos para ejecutar
-1. Abrir Laragon e iniciar MariaDB (usuario `root`, sin contraseña).
+1. Abrir Laragon e iniciar MySQL (usuario `root`, sin contraseña).
 2. Crear la base de datos vacía:
    ```sql
    CREATE DATABASE vet_login_db;

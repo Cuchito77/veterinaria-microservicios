@@ -12,7 +12,7 @@ validar la existencia de una mascota antes de operar.
 - **Java:** 21
 - **Spring Boot:** 4.0.6
 - **Puerto:** `8081`
-- **Base de datos:** `vet_usuarios_db` (MariaDB / Laragon)
+- **Base de datos:** `vet_usuarios_db` (MySQL / Laragon)
 - **Persistencia:** JPA + Hibernate (ddl-auto=validate) + Flyway
 
 ## Funcionalidades implementadas
@@ -25,7 +25,7 @@ validar la existencia de una mascota antes de operar.
   y logs estructurados con SLF4J.
 
 ## Pasos para ejecutar
-1. Abrir Laragon e iniciar MariaDB (usuario `root`, sin contraseña).
+1. Abrir Laragon e iniciar MySQL (usuario `root`, sin contraseña).
 2. Crear la base de datos vacía:
    ```sql
    CREATE DATABASE vet_usuarios_db;
