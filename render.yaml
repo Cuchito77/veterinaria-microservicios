@@ -3,7 +3,7 @@
 # Despliega ms-usuarios como Web Service Docker en Render.
 #
 # La base de datos es un MySQL gratuito de Aiven (Render no
-# ofrece MariaDB/MySQL gratis). Las credenciales se cargan
+# ofrece base de datos MySQL gratis). Las credenciales se cargan
 # como variables de entorno SECRETAS en el dashboard de
 # Render (sync: false = Render las pide al crear el servicio,
 # nunca quedan en el repositorio).
@@ -20,13 +20,15 @@ services:
     # TODO: cambiar a "main" cuando se mergee feature/docker.
     branch: feature/docker
     envVars:
+      # ── Perfil de Spring: activa el bloque "prod" del application.yml
+      #    (puerto por ${PORT}, datasource por variables, sin Eureka) ──
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
       # ── Conexion a la BD MySQL de Aiven (secretas) ──
+      #    Las usa el perfil prod: ${SPRING_DATASOURCE_URL}, etc.
       - key: SPRING_DATASOURCE_URL
         sync: false   # se ingresa en el dashboard
       - key: SPRING_DATASOURCE_USERNAME
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
-      # ── En la nube el servicio va solo, sin Eureka ──
-      - key: EUREKA_CLIENT_ENABLED
-        value: "false"

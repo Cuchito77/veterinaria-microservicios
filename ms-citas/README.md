@@ -14,7 +14,7 @@ de las mascotas y se comunica con otros dos microservicios mediante **WebClient*
 - **Java:** 21
 - **Spring Boot:** 4.0.6
 - **Puerto:** `8082`
-- **Base de datos:** `vet_citas_db` (MariaDB / Laragon)
+- **Base de datos:** `vet_citas_db` (MySQL / Laragon)
 - **Persistencia:** JPA + Hibernate (ddl-auto=validate) + Flyway
 - **Comunicación entre microservicios:** WebClient (spring-boot-starter-webflux)
 
@@ -36,7 +36,7 @@ el principio de independencia de datos de la arquitectura de microservicios.
 deben estar corriendo antes de crear citas con producto.**
 
 ## Pasos para ejecutar
-1. Abrir Laragon e iniciar MariaDB (usuario `root`, sin contraseña).
+1. Abrir Laragon e iniciar MySQL (usuario `root`, sin contraseña).
 2. Crear la base de datos vacía:
    ```sql
    CREATE DATABASE vet_citas_db;

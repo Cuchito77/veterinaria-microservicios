@@ -1,0 +1,97 @@
+# ═══════════════════════════════════════════════════
+# MS-USUARIOS · application.yml
+# Microservicio de Usuarios (duenos y mascotas)
+#
+# Usa PERFILES de Spring (spring.profiles):
+#   - dev  : ejecucion LOCAL (Laragon + Eureka en localhost). Perfil por defecto.
+#   - prod : despliegue REMOTO (Render + Aiven). Sin Eureka, todo por variables.
+#
+# Las variables de entorno (docker-compose / Render) SOBREESCRIBEN
+# estos valores (relaxed binding de Spring Boot).
+# ═══════════════════════════════════════════════════
+
+spring:
+  application:
+    name: ms-usuarios
+  # Perfil activo por defecto = dev (local). En la nube se pone prod.
+  profiles:
+    active: dev
+  # ── JPA / HIBERNATE (comun a todos los perfiles) ──
+  jpa:
+    # validate: Hibernate solo verifica que las entidades coincidan
+    # con las tablas que creo Flyway. No crea ni modifica nada.
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # ── FLYWAY (migraciones) ──────────────────────────
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+# ── SWAGGER / OPENAPI (comun) ───────────────────────
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /doc/swagger-ui.html
+    # Guarda el token del boton Authorize en el navegador:
+    # se autoriza UNA sola vez y queda persistido (no se pide de nuevo).
+    persist-authorization: true
+
+# ── JWT (MISMA clave que ms-login para validar tokens) ──
+jwt:
+  secret: ${JWT_SECRET:veterinariaFullStackCL2026claveSecretaJWTsuperSeguraHS256xyz123}
+
+# ═══════════════════════════════════════════════════
+# PERFIL DEV · ejecucion local (Laragon + Eureka local)
+# ═══════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/vet_usuarios_db
+    username: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# ═══════════════════════════════════════════════════
+# PERFIL PROD · despliegue remoto (Render + Aiven)
+# Todo viene de variables de entorno SECRETAS.
+# El servicio corre solo, sin registrarse en Eureka.
+# ═══════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # Aiven es MySQL 8.x; Hibernate detecta el MySQLDialect automaticamente
+
+# Render/Railway entregan el puerto por la variable PORT
+server:
+  port: ${PORT:8081}
+
+eureka:
+  client:
+    enabled: false

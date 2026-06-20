@@ -1,5 +1,5 @@
 -- ═════════════════════════════════════════════════════
--- INIT-DB · Se ejecuta UNA vez al crear el contenedor MariaDB
+-- INIT-DB · Se ejecuta UNA vez al crear el contenedor MySQL
 -- (docker-entrypoint-initdb.d). Crea las 4 bases vacias;
 -- Flyway crea las tablas cuando arranca cada microservicio.
 -- ═════════════════════════════════════════════════════

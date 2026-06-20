@@ -79,9 +79,11 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- Driver MySQL (Aiven es MySQL 8.x; Laragon/MariaDB local tambien
+             funciona con este connector usando URLs jdbc:mysql://) -->
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!-- Flyway (en Spring Boot 3.x se usa flyway-core directamente) -->

@@ -3,7 +3,7 @@
 # Levanta todo el sistema con:  docker compose up --build
 #
 # Orden de arranque (depends_on + healthchecks):
-#   1. mariadb        (crea las 4 BD con docker/init-db.sql)
+#   1. mysql          (crea las 4 BD con docker/init-db.sql)
 #   2. eureka-server  (registro de servicios)
 #   3. ms-login, ms-usuarios, ms-citas, ms-inventario
 #   4. api-gateway    (punto unico de entrada: http://localhost:8080)
@@ -16,21 +16,21 @@
 services:
 
   # ── BASE DE DATOS ──────────────────────────────────
-  mariadb:
-    image: mariadb:11
-    container_name: vet-mariadb
+  mysql:
+    image: mysql:8.4
+    container_name: vet-mysql
     environment:
-      MARIADB_ROOT_PASSWORD: vetclave123
+      MYSQL_ROOT_PASSWORD: vetclave123
     volumes:
       # Script que crea las 4 bases de datos al primer arranque
       - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
       # Volumen para que los datos sobrevivan a un "docker compose down"
-      - mariadb_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     ports:
-      # 3307 afuera para NO chocar con el MariaDB de Laragon (3306)
+      # 3307 afuera para NO chocar con el MySQL/MariaDB de Laragon (3306)
       - "3307:3306"
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pvetclave123"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -53,14 +53,14 @@ services:
     build: ./ms-login
     container_name: vet-ms-login
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/vet_login_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vet_login_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: vetclave123
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8084:8084"
     depends_on:
-      mariadb:
+      mysql:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -70,14 +70,14 @@ services:
     build: ./ms-usuarios
     container_name: vet-ms-usuarios
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/vet_usuarios_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vet_usuarios_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: vetclave123
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8081:8081"
     depends_on:
-      mariadb:
+      mysql:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -87,14 +87,14 @@ services:
     build: ./ms-inventario
     container_name: vet-ms-inventario
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/vet_inventario_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vet_inventario_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: vetclave123
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8083:8083"
     depends_on:
-      mariadb:
+      mysql:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -104,7 +104,7 @@ services:
     build: ./ms-citas
     container_name: vet-ms-citas
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/vet_citas_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vet_citas_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: vetclave123
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
@@ -114,7 +114,7 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      mariadb:
+      mysql:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
@@ -136,4 +136,4 @@ services:
         condition: service_healthy
 
 volumes:
-  mariadb_data:
+  mysql_data:

@@ -9,7 +9,7 @@ Sistema de gestión para una veterinaria basado en microservicios con Spring Boo
 
 ## Tecnologías
 - Java 21 · Spring Boot 3.4.5 · Spring Cloud 2024.0.1 (Gateway + Eureka)
-- MariaDB (Laragon) · JPA + Hibernate + Flyway
+- MySQL (Laragon / Aiven) · JPA + Hibernate + Flyway
 - Spring Security + JWT · Swagger/OpenAPI · HATEOAS
 - Comunicación entre microservicios: WebClient
 - Docker + Docker Compose
@@ -29,13 +29,13 @@ Con Docker Desktop corriendo, en la raíz del proyecto:
 ```bash
 docker compose up --build
 ```
-Eso levanta TODO el sistema en orden: MariaDB (crea las 4 BD con
+Eso levanta TODO el sistema en orden: MySQL (crea las 4 BD con
 `docker/init-db.sql`) → Eureka → los 4 microservicios → API Gateway.
 
 - Entrada única por el Gateway: http://localhost:8080
 - Dashboard de Eureka: http://localhost:8761
 - Swagger de cada servicio: http://localhost:PUERTO/doc/swagger-ui.html
-- MariaDB del contenedor queda en el puerto **3307** (no choca con Laragon)
+- MySQL del contenedor queda en el puerto **3307** (no choca con Laragon)
 
 Para detener todo: `docker compose down` (los datos persisten en un volumen;
 para borrarlos también: `docker compose down -v`).
@@ -47,7 +47,7 @@ sobreescriben `application.properties`, por lo que la configuración local
 con Laragon sigue funcionando sin cambios.
 
 ## Cómo ejecutar de forma local (Laragon + IntelliJ)
-1. Iniciar MariaDB en Laragon (usuario root, sin contraseña).
+1. Iniciar MySQL en Laragon (usuario root, sin contraseña).
 2. Crear las 4 bases de datos vacías:
 ```sql
    CREATE DATABASE vet_login_db;

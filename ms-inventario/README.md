@@ -12,7 +12,7 @@ de descuento de stock que es consumido por ms-citas.
 - **Java:** 21
 - **Spring Boot:** 4.0.6
 - **Puerto:** `8083`
-- **Base de datos:** `vet_inventario_db` (MariaDB / Laragon)
+- **Base de datos:** `vet_inventario_db` (MySQL / Laragon)
 - **Persistencia:** JPA + Hibernate (ddl-auto=validate) + Flyway
 
 ## Funcionalidades implementadas
@@ -24,7 +24,7 @@ de descuento de stock que es consumido por ms-citas.
   y logs estructurados con SLF4J.
 
 ## Pasos para ejecutar
-1. Abrir Laragon e iniciar MariaDB (usuario `root`, sin contraseña).
+1. Abrir Laragon e iniciar MySQL (usuario `root`, sin contraseña).
 2. Crear la base de datos vacía:
    ```sql
    CREATE DATABASE vet_inventario_db;
