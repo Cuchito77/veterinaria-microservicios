@@ -5,7 +5,7 @@ Sistema de gestión para una veterinaria basado en microservicios con Spring Boo
 
 ## Integrantes — Equipo N° 8
 - Cusi Ramirez B.
-- Satiago Garcia-Huidobro S.
+- Santiago Garcia-Huidobro S.
 
 ## Tecnologías
 - Java 21 · Spring Boot 3.4.5 · Spring Cloud 2024.0.1 (Gateway + Eureka)
