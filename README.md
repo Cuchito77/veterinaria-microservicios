@@ -24,6 +24,23 @@ Sistema de gestión para una veterinaria basado en microservicios con Spring Boo
 | ms-inventario | 8083   | vet_inventario_db | Productos y stock                        |
 | ms-login      | 8084   | vet_login_db      | Autenticación y cuentas de usuario (JWT) |
 
+## Rutas principales del API Gateway
+
+Todo el sistema se consume por la entrada única del Gateway: **http://localhost:8080**.
+El Gateway enruta cada solicitud al microservicio correspondiente (descubierto vía Eureka con `lb://`):
+
+| Ruta (prefijo) | Microservicio destino | Descripción |
+|---|---|---|
+| `/api/auth/**` | ms-login | Login / autenticación (emite el JWT) |
+| `/api/usuarios/**`, `/api/v2/usuarios/**` | ms-login | Cuentas de usuario |
+| `/api/duenos/**`, `/api/v2/duenos/**` | ms-usuarios | Dueños |
+| `/api/mascotas/**`, `/api/v2/mascotas/**` | ms-usuarios | Mascotas |
+| `/api/productos/**`, `/api/v2/productos/**` | ms-inventario | Productos y stock |
+| `/api/citas/**`, `/api/v2/citas/**` | ms-citas | Citas |
+
+> Las rutas `/api/v2/**` corresponden a la API HATEOAS (respuestas HAL con enlaces).
+> Configuración de las rutas: `api-gateway/src/main/resources/application.yml`.
+
 ## Cómo ejecutar con Docker (recomendado)
 Con Docker Desktop corriendo, en la raíz del proyecto:
 ```bash
