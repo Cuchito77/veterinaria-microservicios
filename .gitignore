@@ -1,0 +1,36 @@
+# ───── Compilados / build (Maven) ─────
+target/
+*.class
+*.jar
+*.war
+
+# ───── Logs ─────
+*.log
+logs/
+
+# ───── IDEs ─────
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+# Eclipse / VS Code
+.classpath
+.project
+.settings/
+.vscode/
+
+# ───── Sistema operativo ─────
+.DS_Store
+Thumbs.db
+
+# ───── Maven wrapper (descargable) ─────
+.mvn/wrapper/maven-wrapper.jar
+
+# ───── Variables de entorno / secretos ─────
+.env
+*.env
+
+# ───── Artefactos de prueba locales ─────
+_build.log
+_prueba.txt
