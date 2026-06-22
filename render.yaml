@@ -17,8 +17,7 @@ services:
     rootDir: ms-usuarios
     plan: free
     # Rama que Render observa para auto-desplegar.
-    # TODO: cambiar a "main" cuando se mergee feature/docker.
-    branch: feature/docker
+    branch: main
     envVars:
       # ── Perfil de Spring: activa el bloque "prod" del application.yml
       #    (puerto por ${PORT}, datasource por variables, sin Eureka) ──
